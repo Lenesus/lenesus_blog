@@ -1,6 +1,8 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { validationResult } from "express-validator";
+import { registerValidation } from './validations/auth.js';
 
  mongoose.connect('mongodb+srv://admin:wwwwww@cluster0.cyuh71l.mongodb.net/?retryWrites=true&w=majority')
      .then(() => console.log('DB ok')).catch((err) => console.log('DB error', err));
@@ -9,21 +11,14 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-   res.send('helloooo, world');
-});
+app.post('/auth/register', registerValidation, (req, res) => {
+   const errors = validationResult(req);
+   if (!errors.isEmpty()) {
+    return res.status(400).json(errors.array());
+   }
 
-app.post('/auth/login', (req, res) => {
-    console.log(req.body);
-
-    const token = jwt.sign({
-        email: req.body.email,
-        fullName: 'jilly billy',
-    }, 'secret321');
-
-    res.json ({
-       success: true,
-        token,
+   res.json({
+    success: true,
    });
 });
 
