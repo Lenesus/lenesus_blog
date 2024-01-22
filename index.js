@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import { validationResult } from "express-validator";
 import { registerValidation } from './validations/auth.js';
 import UserModel from './models/User.js';
+import checkAuth from './utils/checkAuth.js';
 
  mongoose.connect('mongodb+srv://admin:wwwwww@cluster0.cyuh71l.mongodb.net/blog?retryWrites=true&w=majority')
      .then(() => console.log('DB ok')).catch((err) => console.log('DB error', err));
@@ -103,6 +104,24 @@ app.post('/auth/register', registerValidation, async (req, res) => {
             message: 'Не удалось зарегистрироваться',
          });
   }
+});
+
+app.get('/auth/me', checkAuth, async (req, res) => {
+   try{
+      const user = await UserModel.findById(req.userId);
+
+      if(!user) {
+         return res.status(404).json({
+            message: 'Пользователь не найден',
+         });
+      }
+
+
+      const {passwordHash, ... userData} = user._doc;
+
+      res.json(userData);
+
+   } catch (err) {}
 });
 
 app.listen(4444, (err) => {
