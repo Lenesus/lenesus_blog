@@ -21,6 +21,8 @@ app.post('/auth/register', registerValidation, UserController.register );
 app.get('/auth/me', checkAuth, UserController.authMe );
 
 
+
+app.get('/posts', PostController.getAll);
 app.post('/posts', checkAuth, postCreateValidation, PostController.create);
 
 app.listen(4444, (err) => {
