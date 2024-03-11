@@ -3,11 +3,9 @@ import multer from 'multer';
 import mongoose from 'mongoose';
 import { registerValidation, loginValidation, postCreateValidation } from './validations.js';
 import checkAuth from './utils/checkAuth.js';
-
-import * as UserController from './controllers/UserController.js';
-
-import * as PostController from './controllers/PostController.js';
 import handleValidationsErrors from './utils/handleValidationsErrors.js';
+import {UserController, PostController} from './controllers/index.js';
+
 
  mongoose.connect('mongodb+srv://admin:wwwwww@cluster0.cyuh71l.mongodb.net/blog?retryWrites=true&w=majority')
      .then(() => console.log('DB ok')).catch((err) => console.log('DB error', err));
@@ -44,7 +42,7 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 
  app.get('/posts', PostController.getAll);
  app.get('/posts/:id', checkAuth, PostController.getOne);
- app.post('/posts', checkAuth, postCreateValidation, PostController.create);
+ app.post('/posts', checkAuth, postCreateValidation, handleValidationsErrors, PostController.create);
  app.delete('/posts:id', checkAuth, PostController.remove);
  app.patch('/posts/:id', checkAuth, postCreateValidation, PostController.update);
 
